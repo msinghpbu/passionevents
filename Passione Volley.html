@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Passione Volley — Invito partita di beach volley</title>
+  <meta name="description" content="Partecipa alla partita di beach volley a Brendola con i colleghi di Passione Beauty: sport, divertimento e spirito di squadra." />
+  <style>
+    :root {
+      --bg1: #fff7e6;
+      --bg2: #e6f7ff;
+      --accent: #ff7a59;
+      --accent-2: #0077b6;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --card: #ffffff;
+      --ring: rgba(0,0,0,.08);
+      --radius: 16px;
+      --shadow: 0 10px 30px rgba(0,0,0,.08);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      color: var(--text);
+      line-height: 1.6;
+      background: linear-gradient(180deg, var(--bg1), var(--bg2));
+    }
+    .hero {
+      position: relative;
+      padding: clamp(48px, 6vw, 96px) 24px;
+      text-align: center;
+      overflow: hidden;
+      background:
+        radial-gradient(1500px 300px at 50% 120%, rgba(255,200,140,.35), transparent 60%),
+        url('https://montecchio-maggiore-api.municipiumapp.it/s3/4305/media/banner-eventi_sito-15.png') center/cover no-repeat;
+      color: #fff;
+    }
+    .hero::after {
+      content: "";
+      position: absolute; inset: 0;
+      background: linear-gradient(180deg, rgba(0,0,0,.4), rgba(0,0,0,.3));
+    }
+    .hero-inner { position: relative; z-index: 1; max-width: 1100px; margin: 0 auto; }
+    .kicker { font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: #ffedcc; }
+    h1 { font-size: clamp(32px, 6vw, 56px); margin: 8px 0 10px; line-height: 1.15; }
+    .subtitle { font-size: clamp(16px, 2.2vw, 20px); color: #ffeccc; opacity: .95; }
+    .cta { margin-top: 24px; display: inline-flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+    .btn { padding: 14px 20px; border-radius: 999px; font-weight: 700; font-size: 16px; box-shadow: var(--shadow); text-decoration: none; display: inline-flex; align-items: center; gap: 10px; }
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-outline { background: rgba(255,255,255,.6); color: #0b1a2b; border: 1px solid rgba(0,0,0,.08); }
+    .section { padding: clamp(32px, 4vw, 64px) 24px; }
+    .container { max-width: 1000px; margin: 0 auto; }
+    .grid { display: grid; gap: 24px; grid-template-columns: 1fr; }
+    @media (min-width: 900px) { .grid-2 { grid-template-columns: 1.2fr .8fr; } }
+    .card { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); padding: clamp(20px, 2.5vw, 28px); border: 1px solid var(--ring); }
+    h2 { margin: 0 0 8px; font-size: clamp(22px, 3.2vw, 28px); }
+    p { margin: 0 0 12px; color: var(--text); }
+    .map-card iframe { width: 100%; min-height: 340px; border: 0; border-radius: 12px; }
+    footer { text-align: center; padding: 32px 24px 48px; color: var(--muted); font-size: 14px; }
+  </style>
+</head>
+<body>
+  <header class="hero" id="top">
+    <div class="hero-inner">
+      <div class="kicker">Passione Volley</div>
+      <h1>Partita di beach volley</h1>
+      <p class="subtitle">Unisciti a noi per un’ora di sport, risate e spirito di squadra a <strong>Brendola</strong>. Scegli una o entrambe le date: martedì 19 e mercoledì 20 agosto 2025, ore 19:00–20:00.</p>
+      <div class="cta">
+        <a class="btn btn-primary" href="#iscrizione">Iscriviti ora</a>
+        <a class="btn btn-outline" href="#dove">Dove si gioca</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="section">
+      <div class="container grid grid-2">
+        <article class="card">
+          <h2>Di cosa si tratta</h2>
+          <p>Stiamo organizzando una partita amichevole di beach volley tra colleghi Passione Beauty, un’occasione per divertirsi, fare movimento e conoscersi meglio. L’evento si svolgerà a <strong>Brendola (VI)</strong>, presso il <strong>Palazzetto dello Sport</strong>. Scegli una o entrambe le date disponibili e unisciti alla nostra squadra per un’esperienza all’insegna dell’energia e della condivisione.</p>
+        </article>
+        <aside class="card map-card" id="dove">
+          <h2>Dove si gioca</h2>
+          <p>Il campo si trova a Brendola, presso il Palazzetto dello Sport: <em>Piazza del Donatore, 1, 36040 Brendola VI</em>. Apri le indicazioni per raggiungerlo con Google Maps.</p>
+          <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2781.2739554468366!2d11.44708837673946!3d45.47064027107344!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x477f30e0b30b9c59%3A0x2a5a2c6131f8b7ea!2sPiazza%20del%20Donatore%2C%201%2C%2036040%20Brendola%20VI!5e0!3m2!1sit!2sit!4v1691856000000!5m2!1sit!2sit" allowfullscreen="" loading="lazy"></iframe>
+        </aside>
+      </div>
+    </section>
+
+    <section class="section" id="iscrizione">
+      <div class="container">
+        <div class="card">
+          <h2>Iscrizione</h2>
+          <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSez2sxvevJ1r8EuRKDRISvp7kR5oAvDmPak6YIDsVqPkgYmIw/viewform?embedded=true" width="100%" height="900" frameborder="0" marginheight="0" marginwidth="0">Caricamento…</iframe>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div>© 2025 Passione Beauty — Evento interno</div>
+  </footer>
+</body>
+</html>
