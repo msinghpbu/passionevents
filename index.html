@@ -17,6 +17,15 @@
       --ring: rgba(0,0,0,.08);
       --radius: 16px;
       --shadow: 0 10px 30px rgba(0,0,0,.08);
+
+      /* widget */
+      --tile: #f7fafc;
+      --tile-border: #e5e7eb;
+      --occupied: #00b4d8;
+      --free: #cbd5e1;
+      --danger: #ef4444;
+      --warn: #f59e0b;
+      --ok: #10b981;
     }
     * { box-sizing: border-box; }
     body {
@@ -58,6 +67,60 @@
     p { margin: 0 0 12px; color: var(--text); }
     .map-card iframe { width: 100%; min-height: 340px; border: 0; border-radius: 12px; }
     footer { text-align: center; padding: 32px 24px 48px; color: var(--muted); font-size: 14px; }
+
+    /* ========== WIDGET POSTI (orizzontale) ========== */
+    .widget {
+      display: flex; gap: 18px; align-items: center; flex-wrap: wrap;
+    }
+    .widget h2 { margin: 0 0 4px; }
+    .widget .col { display: grid; gap: 10px; }
+    .widget .stats {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; min-width: 320px;
+    }
+    .widget .stat {
+      border: 1px solid var(--ring); border-radius: 12px; padding: 10px 12px; background: #f9fafb;
+      display: grid; gap: 2px; text-align: center;
+    }
+    .widget .stat small { color: var(--muted); font-weight: 600; }
+    .widget .stat b { font-size: 20px; }
+    .meter {
+      height: 10px; border-radius: 999px; background: #eef2f7; border: 1px solid var(--ring); overflow: hidden; min-width: 320px;
+    }
+    .meter > i {
+      display: block; height: 100%; width: 0%;
+      background: linear-gradient(90deg, var(--occupied), #61a5fa);
+      transition: width .4s ease;
+    }
+    .legend {
+      display: flex; gap: 10px; align-items: center; color: var(--muted); font-size: 13px; flex-wrap: wrap;
+    }
+    .dot { width: 14px; height: 14px; border-radius: 4px; border: 1px solid var(--tile-border); background: var(--tile); }
+    .dot.full { border-color: rgba(0,180,216,.5); background: linear-gradient(180deg, #dff7ff, #eaf6ff); }
+
+    .seats {
+      display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
+    }
+    .seat {
+      width: 64px; aspect-ratio: 1/1; border-radius: 14px;
+      background: linear-gradient(180deg, #fff, #f6f7fb);
+      border: 1px solid var(--tile-border);
+      display: grid; place-items: center; position: relative; overflow: hidden;
+    }
+    .seat svg { width: 56%; opacity: .7 }
+    .seat.occ {
+      background:
+        radial-gradient(120px 80px at 80% -10%, rgba(0, 180, 216, .20), transparent 60%),
+        linear-gradient(180deg, #fff, #eef6ff);
+      border-color: rgba(0,180,216,.55);
+      box-shadow: inset 0 0 0 1px rgba(0,180,216,.28);
+    }
+    .seat.occ svg { opacity: 1; }
+    .warn { color: var(--warn); font-weight: 700 }
+    .danger { color: var(--danger); font-weight: 700 }
+    @media (max-width: 600px) {
+      .widget .stats, .meter { min-width: 100%; }
+      .seat { width: 56px; }
+    }
   </style>
 </head>
 <body>
@@ -90,6 +153,45 @@
 
     <section class="section" id="iscrizione">
       <div class="container">
+        <!-- WIDGET sopra, orizzontale -->
+        <!-- MODIFICA QUI i valori data-capacity e data-occupied -->
+        <aside
+          class="card"
+          id="widget-posti"
+          aria-live="polite"
+          data-capacity="8"
+          data-occupied="6"
+          style="margin-bottom: 24px;"
+        >
+          <div class="widget">
+            <div class="col" style="min-width:320px">
+              <h2>Posti disponibili</h2>
+              <div class="stats" role="group" aria-label="Statistiche posti">
+                <div class="stat">
+                  <small>Disponibili</small>
+                  <b id="w-available">—</b>
+                </div>
+                <div class="stat">
+                  <small>Occupati</small>
+                  <b id="w-occupied">—</b>
+                </div>
+                <div class="stat">
+                  <small>Totali</small>
+                  <b id="w-total">—</b>
+                </div>
+              </div>
+              <div class="meter" aria-hidden="true"><i id="w-meter"></i></div>
+              <div class="legend">
+                <span class="dot"></span> libero
+                <span class="dot full"></span> occupato
+                <span id="w-note" style="margin-left:auto"></span>
+              </div>
+            </div>
+            <div class="seats" id="w-seats" aria-label="Mappa posti"></div>
+          </div>
+        </aside>
+
+        <!-- FORM sotto -->
         <div class="card">
           <h2>Iscrizione</h2>
           <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSez2sxvevJ1r8EuRKDRISvp7kR5oAvDmPak6YIDsVqPkgYmIw/viewform?embedded=true" width="100%" height="900" frameborder="0" marginheight="0" marginwidth="0">Caricamento…</iframe>
@@ -101,5 +203,61 @@
   <footer>
     <div>© 2025 Passione Beauty — Evento interno</div>
   </footer>
+
+  <script>
+    (function () {
+      const root = document.getElementById('widget-posti');
+      if (!root) return;
+
+      // === Legge i dati manuali dagli attributi ===
+      const capienza = Math.max(0, parseInt(root.dataset.capacity || '0', 10));
+      const occupati = Math.max(0, parseInt(root.dataset.occupied || '0', 10)); // <-- CAMBIA QUESTO VALORE NEL MARKUP
+      const taken = Math.min(occupati, capienza);
+      const liberi = Math.max(capienza - taken, 0);
+
+      // === Aggiorna numeri e barra ===
+      const elAvail = root.querySelector('#w-available');
+      const elOcc = root.querySelector('#w-occupied');
+      const elTot = root.querySelector('#w-total');
+      const elMeter = root.querySelector('#w-meter');
+      const elSeats = root.querySelector('#w-seats');
+      const elNote = root.querySelector('#w-note');
+
+      elAvail.textContent = liberi;
+      elOcc.textContent = taken;
+      elTot.textContent = capienza;
+
+      const perc = capienza ? (taken / capienza) * 100 : 0;
+      elMeter.style.width = perc.toFixed(2) + '%';
+
+      // Nota stato
+      if (capienza === 0) {
+        elNote.textContent = '';
+      } else if (liberi === 0) {
+        elNote.innerHTML = '<span class="danger">Completo</span>';
+      } else if (liberi <= 2) {
+        elNote.innerHTML = '<span class="warn">Quasi pieno</span>';
+      } else {
+        elNote.innerHTML = '<span style="color:var(--ok);font-weight:700">Disponibile</span>';
+      }
+
+      // === Render icone/sagome ===
+      const personSVG = `
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M12 12c2.8 0 5-2.2 5-5s-2.2-5-5-5-5 2.2-5 5 2.2 5 5 5Zm0 2c-4 0-8 2-8 6v1h16v-1c0-4-4-6-8-6z"/>
+        </svg>`;
+      for (let i = 0; i < capienza; i++) {
+        const div = document.createElement('div');
+        div.className = 'seat' + (i < taken ? ' occ' : '');
+        div.setAttribute('role', 'img');
+        div.setAttribute('aria-label', i < taken ? 'Posto occupato' : 'Posto libero');
+        div.innerHTML = personSVG;
+        elSeats.appendChild(div);
+      }
+
+      // Accessibilità: riepilogo
+      root.setAttribute('aria-label', `Posti: totali ${capienza}, occupati ${taken}, disponibili ${liberi}`);
+    })();
+  </script>
 </body>
 </html>
